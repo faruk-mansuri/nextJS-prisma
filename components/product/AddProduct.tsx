@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 import { createProduct, updateProduct } from "@/lib/actions/product";
-import { Product, Review, Image } from "@prisma/client";
+import { Image, Product, Review } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 export const revalidate = 1;
