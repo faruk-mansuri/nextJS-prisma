@@ -8,11 +8,15 @@ import { Label } from "@/components/ui/label";
 
 export default function ImageSelect({
   onChange,
+  imageUrl,
 }: {
   onChange: (value: string[]) => void;
+  imageUrl: string[];
 }) {
   const [numImages, setNumImages] = useState(1);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([
+    ...imageUrl.map((url) => url),
+  ]);
   const handleAddImage = () => {
     setNumImages(numImages + 1);
   };
@@ -52,7 +56,12 @@ export default function ImageSelect({
             </Button>
           </div>
         ))}
-        <Button size="icon" variant="outline" onClick={handleAddImage}>
+        <Button
+          type="button"
+          size="icon"
+          variant="outline"
+          onClick={handleAddImage}
+        >
           <PlusIcon className="h-4 w-4" />
           <span className="sr-only">Add Image</span>
         </Button>

@@ -20,8 +20,8 @@ model Product {
   price       Float
   description String
   category    String
-  Review      Review[]
-  Image       Image[]
+  reviews     Review[]
+  images      Image[]
   creatdAt    DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

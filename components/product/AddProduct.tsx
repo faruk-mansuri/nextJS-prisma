@@ -17,39 +17,65 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import { createProduct } from "@/lib/actions/product";
+import { createProduct, updateProduct } from "@/lib/actions/product";
+import { Product, Review, Image } from "@prisma/client";
+import { useRouter } from "next/navigation";
+
 export const revalidate = 1;
+export interface ProductEditProps extends Product {
+  id: number;
+  reviews: Review[];
+  images: Image[];
+}
 
 export default function AddProduct({
   edit,
   id,
+  product,
 }: {
   edit?: boolean;
   id?: string;
+  product?: ProductEditProps;
 }) {
+  const router = useRouter();
   const title = edit ? "Edit Product " + id : "Add Product";
   const subText = edit
     ? "Update the details of your product here."
     : "Add a new product to your store.";
 
-  const [images, setImages] = useState<string[]>([]);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("electronics");
+  const [name, setName] = useState(product?.name || "");
+  const [price, setPrice] = useState(product?.price || 0);
+  const [description, setDescription] = useState(product?.description || "");
+  const [category, setCategory] = useState(product?.category || "");
+  const [images, setImages] = useState<string[]>(
+    product?.images.map((i) => i.url) || []
+  );
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    try {
-      const newProduct = await createProduct({
+    if (edit && product) {
+      const updatedProduct = await updateProduct(product.id, {
         name,
-        category,
-        description,
         price,
+        description,
+        category,
         images,
       });
-    } catch (error) {
-      console.error("Error creating product:", error);
+      if (updatedProduct) {
+        // redirect the user back to the product page
+        router.push(`/product/view/${updatedProduct.id}`);
+      }
+    } else {
+      const newProduct = await createProduct({
+        name,
+        price,
+        description,
+        category,
+        images,
+      });
+      if (newProduct) {
+        router.push(`/product/view/${newProduct.id}`);
+      }
     }
   };
 
@@ -109,11 +135,15 @@ export default function AddProduct({
               rows={5}
             />
           </div>
-          <ImageSelect onChange={(value) => setImages(value)} />
+
+          <ImageSelect
+            imageUrl={product?.images.map((img) => img.url) || []}
+            onChange={(value) => setImages(value)}
+          />
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline">Cancel</Button>
-          <Button>Save Changes</Button>
+          <Button type="submit">Save Changes</Button>
         </div>
       </form>
     </div>
