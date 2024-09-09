@@ -2,6 +2,7 @@
 
 import { unstable_cache as cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { equal } from "assert";
 
 interface CreateProductInput {
   name: string;
@@ -114,9 +115,11 @@ export const getAllProducts = async ({
         mode: "insensitive",
       };
     }
+
     if (category && category !== "all") {
       where.category = {
-        equals: category,
+        equals: category.toLowerCase(),
+        mode: "insensitive",
       };
     }
     if (minPrice) {
