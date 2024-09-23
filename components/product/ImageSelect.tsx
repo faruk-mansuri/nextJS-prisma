@@ -13,7 +13,7 @@ export default function ImageSelect({
   onChange: (value: string[]) => void;
   imageUrl: string[];
 }) {
-  const [numImages, setNumImages] = useState(1);
+  const [numImages, setNumImages] = useState(imageUrl.length);
   const [images, setImages] = useState<string[]>([
     ...imageUrl.map((url) => url),
   ]);
