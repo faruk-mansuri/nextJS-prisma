@@ -9,7 +9,7 @@ export default function DeleteProduct({ id }: { id: string }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    const didDelete = await deleteProduct(parseInt(id));
+    const didDelete = await deleteProduct(id);
     if (didDelete) router.push("/search");
     // else show error, like a toast
   };

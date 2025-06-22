@@ -17,7 +17,7 @@ export default function Component({ id }: { id: string }) {
       name,
       rating,
       content: review,
-      productId: parseInt(id),
+      productId: id,
     });
     if (success) {
       console.log("Review created successfully");

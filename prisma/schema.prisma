@@ -9,39 +9,44 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   price       Float
   description String
   category    String
   reviews     Review[]
   images      Image[]
-  creatdAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("products")
 }
 
 model Review {
-  id        Int     @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   rating    Int
   content   String
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id],onDelete: Cascade)
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("reviews")
 }
 
 model Image {
-  id        Int @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   url       String
-  productId Int
-  product   Product @relation(fields: [productId],references: [id], onDelete: Cascade)
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("images")
 }

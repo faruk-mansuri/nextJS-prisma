@@ -13,9 +13,7 @@ export default async function Page({ params }: { params: { path: string[] } }) {
   const id = params.path[1];
 
   if (method === "new") return <AddProduct />;
-
-  const product = await getProductById(parseInt(id));
-
+  const product = await getProductById(id);
   if (!product)
     return (
       <div className="h-screen flex justify-center items-center bg-slate-100">
@@ -32,7 +30,7 @@ export default async function Page({ params }: { params: { path: string[] } }) {
       <Product product={product} />
       <div className="flex flex-col gap-y-5">
         <span className="text-2xl font-bold h-fit">Customer Reviews</span>
-        <ScrollArea className="h-[400px] rounded-md border">
+        <ScrollArea className="h-[400px] rounded-md border border-black">
           <div className="grid gap-5 w-full p-2">
             {product.reviews.map((review) => {
               return <Review key={review.id} review={review} />;

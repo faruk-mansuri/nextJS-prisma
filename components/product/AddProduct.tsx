@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 
 export const revalidate = 1;
 export interface ProductEditProps extends Product {
-  id: number;
+  id: string;
   reviews: Review[];
   images: Image[];
 }
@@ -46,13 +46,27 @@ export default function AddProduct({
   const [name, setName] = useState(product?.name || "");
   const [price, setPrice] = useState(product?.price || 0);
   const [description, setDescription] = useState(product?.description || "");
-  const [category, setCategory] = useState(product?.category || "");
+  const [category, setCategory] = useState(
+    product?.category?.toLocaleLowerCase() || ""
+  );
   const [images, setImages] = useState<string[]>(
     product?.images.map((i) => i.url) || []
   );
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    if (
+      !name.trim() ||
+      !category.trim() ||
+      !description.trim() ||
+      price <= 0 ||
+      images.length === 0
+    ) {
+      alert(
+        "Please fill in all fields, set a valid price, and add at least one image."
+      );
+      return;
+    }
     if (edit && product) {
       const updatedProduct = await updateProduct(product.id, {
         name,
@@ -101,7 +115,7 @@ export default function AddProduct({
               <Label htmlFor="category">Category</Label>
               <Select
                 onValueChange={(value) => setCategory(value)}
-                defaultValue={category}
+                value={category}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
@@ -142,7 +156,7 @@ export default function AddProduct({
           />
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="outline">Cancel</Button>
+          {edit && <Button variant="outline">Cancel</Button>}
           <Button type="submit">Save Changes</Button>
         </div>
       </form>

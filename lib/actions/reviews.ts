@@ -7,7 +7,7 @@ interface CreateReviewInput {
   name: string;
   content: string;
   rating: number;
-  productId: number;
+  productId: string;
 }
 
 export const createReview = async (input: CreateReviewInput) => {

@@ -2,7 +2,6 @@
 
 import { unstable_cache as cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { equal } from "assert";
 
 interface CreateProductInput {
   name: string;
@@ -33,7 +32,7 @@ export const createProduct = async (product: CreateProductInput) => {
   }
 };
 
-async function _getProductById(id: number) {
+async function _getProductById(id: string) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
@@ -54,7 +53,7 @@ export const getProductById = cache(_getProductById, ["getProductById"], {
 });
 
 export const updateProduct = async (
-  id: number,
+  id: string,
   product: CreateProductInput
 ) => {
   try {
@@ -80,7 +79,7 @@ export const updateProduct = async (
   }
 };
 
-export const deleteProduct = async (id: number) => {
+export const deleteProduct = async (id: string) => {
   try {
     await prisma.product.delete({
       where: { id },
@@ -108,28 +107,25 @@ export const getAllProducts = async ({
     const resultPerPage = 5;
     const skip = (page - 1) * resultPerPage;
 
-    const where: any = {};
-    if (name) {
-      where.name = {
-        contains: name,
-        mode: "insensitive",
-      };
-    }
-
-    if (category && category !== "all") {
-      where.category = {
-        equals: category.toLowerCase(),
-        mode: "insensitive",
-      };
-    }
-    if (minPrice) {
-      where.price = {
-        gte: parseInt(minPrice),
-      };
-    }
-
     const allProducts = await prisma.product.findMany({
-      where,
+      where: {
+        name: {
+          contains: name,
+          mode: "insensitive",
+        },
+        category:
+          category && category !== "all"
+            ? {
+                equals: category.toLowerCase(),
+                mode: "insensitive",
+              }
+            : undefined,
+        price: minPrice
+          ? {
+              gte: parseInt(minPrice),
+            }
+          : undefined,
+      },
       include: {
         images: true,
         reviews: true,

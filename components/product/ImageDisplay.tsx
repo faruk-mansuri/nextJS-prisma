@@ -6,6 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from "next/image";
 
 export default function ImageDisplay({ imageUrls }: { imageUrls: string[] }) {
   return (
@@ -30,11 +31,15 @@ export default function ImageDisplay({ imageUrls }: { imageUrls: string[] }) {
         <CarouselContent>
           {imageUrls.map((image, index) => {
             return (
-              <CarouselItem key={index}>
-                <img
+              <CarouselItem key={index} className="relative w-full h-[400px]">
+                <Image
                   src={image}
-                  alt="product"
-                  className="w-full h-full object-cover"
+                  fill
+                  alt={`Product Image ${index + 1}`}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/default-image.jpg";
+                  }}
                 />
               </CarouselItem>
             );
