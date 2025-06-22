@@ -36,7 +36,6 @@ export default function Component({ id }: { id: string }) {
     } finally {
       setIsLoading(false);
       setName("");
-      setRating(0);
       setReview("");
     }
   };
@@ -70,7 +69,7 @@ export default function Component({ id }: { id: string }) {
               Rating
             </label>
             <div className="flex items-center">
-              <RatingSelect onChange={setRating} />
+              <RatingSelect isLoading={isLoading} onChange={setRating} />
             </div>
           </div>
           <div>

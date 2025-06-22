@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Star from "@/components/product/Stars/StarIcon";
 
 export default function RatingSelect({
+  isLoading,
   onChange,
 }: {
+  isLoading: boolean;
   onChange: (rating: number) => void;
 }) {
   const [rating, setRating] = useState(0);
@@ -23,6 +25,13 @@ export default function RatingSelect({
     setRating(rating);
     onChange(rating);
   };
+
+  useEffect(() => {
+    if (isLoading) {
+      setRating(0);
+      setHoverRating(0);
+    }
+  }, [isLoading]);
 
   const renderStars = Array.from({ length: 5 }, (_, index) => {
     const fill = index < hoverRating ? "fill-primary" : "fill-muted";
