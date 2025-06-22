@@ -27,7 +27,7 @@ export default function RatingSelect({
   };
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       setRating(0);
       setHoverRating(0);
     }
