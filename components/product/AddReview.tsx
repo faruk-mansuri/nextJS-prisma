@@ -12,7 +12,10 @@ export default function Component({ id }: { id: string }) {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-
+    if (!name.trim() || rating < 1 || rating > 5 || !review.trim())
+      return alert(
+        "Please fill all fields and select a rating between 1 and 5."
+      );
     const success = await createReview({
       name,
       rating,
