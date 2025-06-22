@@ -52,6 +52,7 @@ export default function AddProduct({
   const [images, setImages] = useState<string[]>(
     product?.images.map((i) => i.url) || []
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -67,29 +68,37 @@ export default function AddProduct({
       );
       return;
     }
-    if (edit && product) {
-      const updatedProduct = await updateProduct(product.id, {
-        name,
-        price,
-        description,
-        category,
-        images,
-      });
-      if (updatedProduct) {
-        // redirect the user back to the product page
-        router.push(`/product/view/${updatedProduct.id}`);
+    try {
+      setIsLoading(true);
+      if (edit && product) {
+        const updatedProduct = await updateProduct(product.id, {
+          name,
+          price,
+          description,
+          category,
+          images,
+        });
+        if (updatedProduct) {
+          // redirect the user back to the product page
+          router.push(`/product/view/${updatedProduct.id}`);
+        }
+      } else {
+        const newProduct = await createProduct({
+          name,
+          price,
+          description,
+          category,
+          images,
+        });
+        if (newProduct) {
+          router.push(`/product/view/${newProduct.id}`);
+        }
       }
-    } else {
-      const newProduct = await createProduct({
-        name,
-        price,
-        description,
-        category,
-        images,
-      });
-      if (newProduct) {
-        router.push(`/product/view/${newProduct.id}`);
-      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      alert("Failed to save product. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -157,7 +166,9 @@ export default function AddProduct({
         </div>
         <div className="flex justify-end gap-2">
           {edit && <Button variant="outline">Cancel</Button>}
-          <Button type="submit">Save Changes</Button>
+          <Button disabled={isLoading} type="submit">
+            {isLoading ? "Saving changes..." : "Save Changes"}
+          </Button>
         </div>
       </form>
     </div>

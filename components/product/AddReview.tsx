@@ -9,6 +9,7 @@ export default function Component({ id }: { id: string }) {
   const [rating, setRating] = useState(0);
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -16,16 +17,27 @@ export default function Component({ id }: { id: string }) {
       return alert(
         "Please fill all fields and select a rating between 1 and 5."
       );
-    const success = await createReview({
-      name,
-      rating,
-      content: review,
-      productId: id,
-    });
-    if (success) {
-      console.log("Review created successfully");
-    } else {
-      console.log("Failed to create review");
+    try {
+      setIsLoading(true);
+      const success = await createReview({
+        name,
+        rating,
+        content: review,
+        productId: id,
+      });
+      if (success) {
+        console.log("Review created successfully");
+      } else {
+        console.log("Failed to create review");
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      alert("Failed to submit review. Please try again later.");
+    } finally {
+      setIsLoading(false);
+      setName("");
+      setRating(0);
+      setReview("");
     }
   };
 
@@ -78,10 +90,11 @@ export default function Component({ id }: { id: string }) {
             />
           </div>
           <button
+            disabled={isLoading}
             className="w-full bg-black hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             type="submit"
           >
-            Submit Review
+            {isLoading ? "Submitting..." : "Submit Review"}
           </button>
         </form>
       </div>
